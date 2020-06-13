@@ -36,7 +36,45 @@ ggplot(data = ca) +
        title = "California National Park Visitation") +
     theme_bw() +
     theme(legend.title=element_blank())
+```
+```{r}
+# 1.
+ggplot(data = se) +
+  geom_point(aes(x = year, y = visitors, color = park_name))
 
+# 2. & 3.
+ggplot(data = se) +
+  geom_point(aes(x = year, y = visitors, color = state)) +
+  labs(x = "Year",
+       y = "Visitation",
+       title = "Southeast States National Park Visitation") +
+  theme_light() +
+  theme(legend.title = element_blank(),
+        axis.text.x = element_text(angle = 45, hjust = 1, size = 14))
+```
+# 5.9
+```{r}
+ggplot(data = se) +
+    geom_point(aes(x = year, y = visitors)) +
+    facet_wrap(~ state)
+
+
+```
+```{r}
+ggplot(data = se) + 
+  geom_jitter(aes(x = park_name, y = visitors, color = park_name), 
+              width = 0.1, 
+              alpha = 0.4) +
+  coord_flip() +
+  theme(legend.position = "none") 
+
+ggplot(data = visit_16, aes(x = state)) + 
+  geom_bar()
+
+
+```
+
+```{r}
 my_plot <- ggplot(data = mass) + 
       geom_bar(aes(x = type, fill = park_name)) +
   labs(x = "",
