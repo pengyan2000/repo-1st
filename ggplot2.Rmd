@@ -14,6 +14,10 @@ knitr::opts_chunk$set(echo = TRUE)
 We're learning ggplot2 It's going to be amazing. 
 ```{r}
 library(tidyverse)
+library(showtext)
+
+showtext_auto(enable = TRUE)
+font_add('KaiTi', regular='KaiTi.ttf')
 
 #National Parks in California
 ca <- read_csv("https://raw.githubusercontent.com/OHI-Science/data-science-training/master/data/ca.csv") 
@@ -32,7 +36,124 @@ mass <- read_csv("https://raw.githubusercontent.com/OHI-Science/data-science-tra
 
 ```
 ```{r}
-ggplot(data = ca) + 
-  geom_point(mapping = aes(x = year, y = visitors))
+ca %>% mutate(logvis = log(visitors)) %>% 
+ggplot() + 
+  geom_point(mapping = aes(x = year, y = logvis, color = park_name))
+```
+```{r}
+ggplot(data = ca) +
+    geom_point(aes(x = year, y = visitors, color = park_name)) +
+    labs(x = "Year",
+       y = "访客人数",
+       title = "加利福尼亚国家公园访客情况") +
+    theme_bw() +
+    theme(legend.title=element_blank(), text = element_text(family = "KaiTi"))
+```
+```{r}
+ggplot(data = se, aes(x = year, y = visitors, col = state)) + 
+  geom_point(size = 1) + 
+  labs(x = "年份",
+       y = "访客人数",
+       title = "美国东南地区国家公园访客人数") +
+  theme_bw() +
+  theme(legend.title=element_blank(), text = element_text(family = "KaiTi"), axis.text.x = element_text(angle = 45, hjust = 1, size = 14))
+
+
+```
+```{r}
+ggplot(data = se) +
+    geom_point(aes(x = year, y = visitors)) +
+    facet_wrap(~ state)
+```
+
+```{r}
+ ggplot(data = se) +
+     geom_point(aes(x = year, y = visitors, color = park_name)) +
+     facet_wrap(~ state, scales = "free")
+```
+```{r}
+ggplot(data = se) + 
+  geom_jitter(aes(x = park_name, y = visitors, color = park_name), 
+              width = 0.1, 
+              alpha = 0.2) +
+  coord_flip() +
+  theme(legend.position = "none") 
+```
+```{r}
+ggplot(se, aes(x = park_name, y = visitors)) + 
+  geom_boxplot() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+```{r}
+se %>% #dplyr::select(park_name == 'Great Smoky Mountains National Park') %>% 
+ggplot(aes(x = visitors)) + 
+  geom_histogram(bins = 20) +
+  facet_wrap(~ park_name)
+```
+```{r}
+ggplot(se, aes(x = year, y = visitors, color = park_name)) +
+   geom_line() +
+  scale_colour_brewer(palette = "Set1")
+```
+```{r}
+ggplot(data = acadia, aes(x = year, y = visitors)) + 
+  geom_point() +
+  geom_line() +
+  geom_smooth(se = F) +
+  labs(title = "Acadia National Park Visitation",
+       y = "Visitation",
+       x = "Year") +
+  theme_bw() 
+```
+```{r}
+ggplot(data = visit_16, aes(x = state)) + 
+  geom_bar()
+```
+```{r}
+ggplot(data = visit_16, aes(x = state, y = visitors, fill = park_name)) + 
+  geom_bar(stat = "identity", position = 'dodge') 
+```
+
+```{r}
+ggplot(data = mass) + 
+      geom_bar(aes(x = type, fill = park_name)) +
+  labs(x = "",
+       y = "")+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 7))
+
+ggplot(data = mass) + 
+      geom_bar(aes(x = park_name, fill = park_name), position = 'dodge') +
+  labs(x = "",
+       y = "")+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 7)) +
+  facet_wrap(~ type)
+```
+```{r}
+pdf('mass.pdf', width = 12, height = 8)
+ggplot(data = mass) + 
+      geom_bar(aes(x = type, fill = park_name)) +
+  labs(x = "",
+       y = "")+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 7))
+dev.off()
+ggsave("mass.png", scale = 1/50, width = 872, height = 483)
+```
+
+```{r}
+#install.packages("plotly")
+library(plotly)
+ggplotly(my_plot)
+```
+```{r}
+acad_vis <- ggplot(data = acadia, aes(x = year, y = visitors)) + 
+  geom_point() +
+  geom_line() +
+  geom_smooth(color = "red") +
+  labs(title = "Acadia National Park Visitation",
+       y = "Visitation",
+       x = "Year") +
+  theme_bw()
+
+ggplotly(acad_vis)
 ```
 
